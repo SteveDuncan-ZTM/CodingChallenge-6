@@ -8,6 +8,7 @@ let rgbColor = 'rgb(109, 50, 90)';
 // function: takes a color number, hex or rgb; detects which type, and calls
 // converter function to convert - hex to rgb, or rgb to hex.
 function getColorType(colorNum) {
+    // console.log(colorNum);
     // regex pattern matching to detect if color type is hex or rgb
     const hexColorRegEx = new RegExp(/^#([0-9a-f]{6})$/i);
     const rgbColorRegEx = new RegExp(/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/);
@@ -17,8 +18,12 @@ function getColorType(colorNum) {
         // call converter function with color number and type
         return convertColorType(colorNum, 'hex');
     } else if (rgbColorRegEx.test(colorNum)){
+        // console.log(colorNum);
         return convertColorType(colorNum, 'rgb');
-    }
+    } 
+    // else {
+    //     console.log(`${colorNum} may not be a valid number`);
+    // }
 }
 
 // function: takes a color number and type; converts the color and returns
@@ -61,27 +66,47 @@ function convertColorType(colorNum, colorType){
     }
 }
 
-// call the convert functions with test colors
-console.log(getColorType(hexColor));
-console.log(getColorType(rgbColor));
+// TEST:
+// function: call converter function with randomly generate color numbers
+function testColorConverter (){
+    let arrColors=[];
 
-function randomColor(num) {
+    // TODO: make this function DRY
+    arrColors = randomColor(10, 'rgb');
+    arrColors.forEach(col => {
+        console.log(`${col} ==> ${getColorType(col)}`);
+    })
+
+    arrColors = randomColor(10, 'hex');
+    arrColors.forEach(col => {
+        // call the convert function to return rgb numbers
+        console.log(`${col} ==> ${getColorType(col)}`);
+    })
+}
+
+// function: generate random color numbers
+function randomColor(num, colorType) {
     // generate random hex colors to test conversion to rgb
     let arrColors=[];
-    for (var n = 1; n <= num; n++) {
-        // generate hex value for color
-        newColor = '#' + Math.random().toString(16).slice(2, 8);
-        // add test numbers to array
-        arrColors.push(newColor);
-        
-    }
+    if (colorType==='hex') {
+        for (let n = 1; n <= num; n++) {
+            // generate hex value for color
+            newColor = '#' + Math.random().toString(16).slice(2, 8);
+            // add test numbers to array
+            arrColors.push(newColor);          
+        }
+    } else if (colorType==='rgb') {
+        for (let n = 1; n <= num; n++) {
+            let tmpArr = [];
+            for (i = 1; i <= 3; i++) {
+                // generate 3 random numbers and add to tmp array
+                tmpArr.push(Math.floor(Math.random() * 255));
+            }
+            // add rgb prefix, convert number to string, and replace , with , + space.
+            arrColors.push(`rgb(${tmpArr.toString().replace(/,/g, ', ')})`);
+        }
+    }    
     return arrColors;
 }
-// call random color generator with however many numbers you want tested
-let arrColors = randomColor(10);
-arrColors.forEach(col => {
-    // call the convert function to return rgb numbers
-    console.log(getColorType(col));
-});
 
-// TODO: create test function for rgb to hex
+testColorConverter();
